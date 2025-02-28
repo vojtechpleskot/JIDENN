@@ -428,9 +428,7 @@ def data_iterator_to_dataset(iterator: Iterator[Dict[str, Union[tf.Tensor, tf.Ra
     # )
     datasets = [tf.data.Dataset.load(batch_folder, compression='GZIP', element_spec=element_spec)
                 for batch_folder, element_spec in zip(batch_folders, element_specs)]
-    dataset = datasets[0]
-    for ds in datasets[1:]:
-        dataset = dataset.concatenate(ds)
+    dataset = tf.data.Dataset.sample_from_datasets(datasets, stop_on_empty_dataset=False)
     dataset = dataset.apply(
         tf.data.experimental.assert_cardinality(sum(cardinalities)))
     return dataset
@@ -999,7 +997,7 @@ class JIDENNDataset:
                              metadata=self.metadata, variables=self.variables,
                              target=self.target, weight=self.weight, length=self.length)
 
-    def remap_data(self, func: Callable[[ROOTVariables], Union[ROOTVariables, Tuple[ROOTVariables, ROOTVariables]]]) -> JIDENNDataset:
+    def remap_data(self, func: Callable[[ROOTVariables], Union[ROOTVariables, Tuple[ROOTVariables, ROOTVariables]]], num_parallel_calls=None) -> JIDENNDataset:
         """Remaps the data of the tf.data.Dataset using the `func` function. The function must take a `ROOTVariables` object and return a `ROOTVariables` object.
         The output of the function is of the form Dict[str, tf.Tensor] or Tuple[Dict[str, tf.Tensor], Dict[str, tf.Tensor]] (optionally also tf.RaggedTensor).
 
@@ -1028,7 +1026,7 @@ class JIDENNDataset:
             @tf.function
             def input_wrapper(*data):
                 return func(*data)
-        dataset = self.dataset.map(input_wrapper)
+        dataset = self.dataset.map(input_wrapper, num_parallel_calls=num_parallel_calls)
         return JIDENNDataset(dataset=dataset, element_spec=dataset.element_spec,
                              metadata=self.metadata,
                              target=self.target, weight=self.weight, length=self.length)

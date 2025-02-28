@@ -7,6 +7,9 @@ import logging
 logging.basicConfig(format='[%(asctime)s][%(levelname)s] - %(message)s',
                     level=logging.INFO, datefmt='%Y-%m-%d %H:%M:%S')
 
+tf.config.threading.set_intra_op_parallelism_threads(16)
+tf.config.threading.set_inter_op_parallelism_threads(16)
+
 from jidenn.data.JIDENNDataset import JIDENNDataset
 
 parser = argparse.ArgumentParser()
@@ -60,8 +63,8 @@ def main(args: argparse.Namespace) -> None:
             return out
         dataset = dataset.remap_data(add_lundplane)
 
-    dataset = dataset.apply(lambda x: x.prefetch(
-        tf.data.AUTOTUNE), preserves_length=True)
+    # dataset = dataset.apply(lambda x: x.prefetch(
+    #     tf.data.AUTOTUNE), preserves_length=True)
     
     if args.train_frac == 1.:
         dataset.save(args.save_path, num_shards=args.num_shards)

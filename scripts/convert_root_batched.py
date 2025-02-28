@@ -1,6 +1,7 @@
 import os
 import sys
 sys.path.append(os.getcwd())
+import tensorflow as tf
 import argparse
 import uproot
 import logging
@@ -26,6 +27,8 @@ parser.add_argument("--num_shards", type=int, default=64,
 parser.add_argument("--ttree", type=str, default='NOMINAL', help="TTree to load from the root file")
 parser.add_argument("--metadata", type=str, default='h_metadata', help="Metadata histogram to load from the root file")
 parser.add_argument("--not_use_ray", action='store_true', help="Disable ray")
+parser.add_argument("--add_lund_plane", action='store_true',
+                    help="Add Lund plane to the dataset")
 
 
 def main(args: argparse.Namespace) -> None:
@@ -58,6 +61,24 @@ def main(args: argparse.Namespace) -> None:
                                                    to_skip=files_to_skip,
                                                    metadata_hist=args.metadata if args.metadata != '' else None,
                                                    manual_cast_int=['photons', 'muons'])
+    
+    if args.add_lund_plane:
+        from jidenn.data.jet_reclustering import tf_create_lund_plane
+        @tf.function
+        def add_lundplane(x):
+            out = x.copy()
+            lund_graph, node_coords = tf.py_function(
+                func=tf_create_lund_plane,
+                inp=[x['part_px'], x['part_py'], x['part_pz'], x['part_energy']],
+                Tout=[tf.TensorSpec(shape=(None, None), dtype=tf.float32), tf.TensorSpec(shape=(None, 4), dtype=tf.float32)]
+            )
+            out['lund_graph'] = lund_graph
+            out['lund_graph_node_px'] = node_coords[:,0]
+            out['lund_graph_node_py'] = node_coords[:,1]
+            out['lund_graph_node_pz'] = node_coords[:,2]
+            out['lund_graph_node_energy'] = node_coords[:,3]
+            return out
+        dataset = dataset.remap_data(add_lundplane)
 
     os.makedirs(args.save_path, exist_ok=True)
     dataset.save(args.save_path, num_shards=args.num_shards)

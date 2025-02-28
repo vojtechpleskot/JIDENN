@@ -131,7 +131,7 @@ dataset:
 
 preprocess:
   normalization_size: 100 # Size of normalization dataset (if normalize is True).
-  draw_distribution:  # Size of the distribution to draw.
+  draw_distribution: 100000 # Size of the distribution to draw.
   min_max_normalization: False
 
 models:
