@@ -999,16 +999,16 @@ class JetClassHighlevel(TrainInput):
         super().__init__(*args, **kwargs)
         if self.variables is None:
             self.variables = [
-                'jet_tau4',
-                'jet_eta',
-                'jet_nparticles',
-                'jet_tau3',
-                'jet_sdmass',
-                'jet_pt',
-                'jet_tau2',
-                'jet_phi',
-                'jet_tau1',
-                'jet_energy',]
+                'jets_tau4',
+                'jets_eta',
+                'jets_nparticles',
+                'jets_tau3',
+                'jets_sdmass',
+                'jets_pt',
+                'jets_tau2',
+                'jets_phi',
+                'jets_tau1',
+                'jets_energy',]
 
     def __call__(self, sample: ROOTVariables) -> ROOTVariables:
         """Loops over the `per_jet_variables` and `per_event_variables` and constructs the input variables.

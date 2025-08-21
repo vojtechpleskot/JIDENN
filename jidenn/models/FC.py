@@ -30,6 +30,29 @@ class FCModel(keras.Model):
 
     """
 
+    # def __init__(self,
+    #              layer_size: int,
+    #              num_layers: int,
+    #              input_size: int,
+    #              output_layer: keras.layers.Layer,
+    #              activation: Callable[[tf.Tensor], tf.Tensor],
+    #              dropout: Optional[float] = None,
+    #              preprocess: Optional[keras.layers.Layer] = None,
+    #              **kwargs) -> None:
+
+    #     self._activation = activation
+    #     self.layer_size, self.num_layers, self.dropout = layer_size, num_layers, dropout
+    #     self.input_size = input_size
+    #     self.output_layer = output_layer
+    #     self.preprocess = preprocess
+        
+
+    #     inputs = keras.layers.Input(shape=(input_size, ))
+    #     preprocessed = preprocess(inputs) if preprocess is not None else inputs
+    #     hidden = self.hidden_layers(preprocessed)
+    #     output = output_layer(hidden)
+    #     super().__init__(inputs=inputs, outputs=output, **kwargs)
+
     def __init__(self,
                  layer_size: int,
                  num_layers: int,
@@ -40,19 +63,40 @@ class FCModel(keras.Model):
                  preprocess: Optional[keras.layers.Layer] = None,
                  **kwargs) -> None:
 
+        # --- FIX: Call the parent constructor first. ---
+        super().__init__(**kwargs)
+        
+        # --- Now, it is safe to assign attributes to self. ---
         self._activation = activation
         self.layer_size, self.num_layers, self.dropout = layer_size, num_layers, dropout
         self.input_size = input_size
         self.output_layer = output_layer
         self.preprocess = preprocess
         
+        # --- Build the model's structure. ---
+        # Note: This is an example of a more standard subclassing pattern.
+        # In your original code, you built the model using the Functional API and passed
+        # inputs/outputs to super().__init__(). This is also a valid pattern,
+        # but the best practice for custom models is to separate __init__ and call().
+        # For a quick fix, you'd need to restructure your logic.
+        # Let's show a more standard way that is less prone to this error.
+        
+        # Define the layers as attributes
+        self.hidden_layers_list = [
+            keras.layers.Dense(layer_size, activation=activation) for _ in range(num_layers)
+        ]
 
-        inputs = keras.layers.Input(shape=(input_size, ))
-        preprocessed = preprocess(inputs) if preprocess is not None else inputs
-        hidden = self.hidden_layers(preprocessed)
-        output = output_layer(hidden)
-        super().__init__(inputs=inputs, outputs=output, **kwargs)
+    def call(self, inputs):
+        # Define the forward pass logic in the call() method
+        x = inputs
+        if self.preprocess is not None:
+            x = self.preprocess(x)
 
+        for layer in self.hidden_layers_list:
+            x = layer(x)
+
+        return self.output_layer(x)
+    
     def hidden_layers(self, inputs: tf.Tensor) -> tf.Tensor:
         """Executes the hidden layers of the model.
 

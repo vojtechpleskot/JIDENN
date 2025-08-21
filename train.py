@@ -202,11 +202,11 @@ def main(args: config.JIDENNConfig) -> None:
         # obtain the compiled model
         model = model_builder.compiled_model
 
-        if args.general.model != 'bdt':
-            model.summary(print_fn=log.info, line_length=120,
-                          show_trainable=True)
-        else:
-            log.warning("No model summary for BDT")
+        # if args.general.model != 'bdt':
+        #     model.summary(print_fn=log.info, line_length=120,
+        #                   show_trainable=True)
+        # else:
+        #     log.warning("No model summary for BDT")
         return model
 
     # build the model
@@ -286,7 +286,7 @@ def main(args: config.JIDENNConfig) -> None:
                                                  bkg_label=args.test_data.background_label,
                                                  wp_mapping=args.test_data.class_working_points,
                                                  label_mapping={label: idx for idx, label in enumerate(args.test_data.labels)})
-        logging.info(results)
+            logging.info(results)
 
         
         
