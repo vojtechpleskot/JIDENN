@@ -35,7 +35,7 @@ def get_preprocessed_dataset(args_data: config.Data,
 
     @tf.function
     def filter_unknown_labels(sample: ROOTVariables) -> bool:
-        is_unknown = tf.reduce_any(sample[args_data.target] == unknown_labels)
+        is_unknown = tf.reduce_any(sample[args_data.target] == tf.cast(unknown_labels, sample[args_data.target].dtype))
         return tf.logical_not(is_unknown)
     
         

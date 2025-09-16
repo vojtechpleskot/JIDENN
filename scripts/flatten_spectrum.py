@@ -49,7 +49,7 @@ parser.add_argument('-w', "--weight_var", type=str, default=None,
 parser.add_argument("--min_count", action='store_true',
                     help="Use min count for each bin")
 #
-parser.add_argument("--flattening_reference_variable", type=str,
+parser.add_argument("--flattening_reference_variable", type=str, default='jets_ifn_label',
                     help="Variable to use as reference for flattening")
 parser.add_argument("--flat_var_upper_limit", type=float,
                     help="Upper limit for the variable to flatten")
@@ -67,7 +67,7 @@ parser.add_argument("--log_binning", action='store_true',
                     help="Use log-spaced bins")
 parser.add_argument("--precompute", action='store_true',
                     help="Precompute the initial distribution")
-parser.add_argument("--reference_variable", type=str, default='jets_PartonTruthLabelID',
+parser.add_argument("--reference_variable", type=str, default='jets_ifn_label',
                     help="Variable to use as reference for flattening")
 parser.add_argument("--wanted_values", type=int, nargs='+',
                     default=[1, 2, 3, 4, 5, 6, 21], help="Values to keep in the reference variable")
@@ -103,7 +103,7 @@ def is_central_jet(data):
 
 
 def get_process_subsample(subsample_id_variable_name: Optional[str] = 'subsample_id',
-                          reference_variable: Optional[str] = 'jets_PartonTruthLabelID',
+                          reference_variable: Optional[str] = 'jets_ifn_label',
                           wanted_values: Optional[list] = [
                               1, 2, 3, 4, 5, 6, 21],
                           max_idx: Optional[int] = 2,
@@ -152,11 +152,11 @@ def main(args: argparse.Namespace) -> None:
                 'Only one or two flattening variables are supported')
         
         if args.flattening_var[0] == 'jets_pt':
-            args.flattening_reference_variable = 'jets_PartonTruthLabelID'
+            # args.flattening_reference_variable = 'jets_PartonTruthLabelID'
             flat_var_upper_limit = args.pt_upper_cut
             flat_var_lower_limit = args.pt_lower_cut
         elif args.flattening_var[0] == 'jets_eta':
-            args.flattening_reference_variable = 'jets_PartonTruthLabelID'
+            # args.flattening_reference_variable = 'jets_PartonTruthLabelID'
             flat_var_upper_limit = args.eta_cut
             flat_var_lower_limit = -args.eta_cut
         
@@ -169,7 +169,7 @@ def main(args: argparse.Namespace) -> None:
         
         
     elif args.flattening_var == 'jets_pt':
-        args.flattening_reference_variable = 'jets_PartonTruthLabelID'
+        # args.flattening_reference_variable = 'jets_PartonTruthLabelID'
         flat_var_upper_limit = args.pt_upper_cut
         flat_var_lower_limit = args.pt_lower_cut
 

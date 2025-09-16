@@ -35,13 +35,17 @@ def main(args: argparse.Namespace) -> None:
         f'Running with args: {{{", ".join([f"{k}: {v}" for k, v in vars(args).items()])}}}')
     os.makedirs(args.save_path, exist_ok=True)
 
-    files = [os.path.join(args.load_path, file) for file in os.listdir(
+    files = [os.path.join(args.load_path, file, 'tf_dataset') for file in os.listdir(
         os.path.join(args.load_path)) if file.startswith(args.start_identifier) and len(os.listdir(os.path.join(args.load_path, file))) > 0]
     if len(files) == 0:
         logging.error(
             f'No files found in {args.load_path}')
         raise ValueError(
             f'No files found in {args.load_path}')
+    else:
+        logging.info(f'Found {len(files)} files in {args.load_path}')
+        for file in files:
+            logging.info(f' - {file}')
 
     dataset = JIDENNDataset.load_multiple(files, mode=args.mode)
     
@@ -75,7 +79,7 @@ def main(args: argparse.Namespace) -> None:
     dss = dataset.split_train_dev_test(
         args.train_frac, args.dev_frac, args.test_frac)
 
-    for name, ds in zip(['test', 'dev', 'train'], dss):
+    for name, ds in zip(['train', 'dev', 'test'], dss):
         save_path = os.path.join(args.save_path, name)
         if os.path.exists(save_path):
             os.system(f'rm -rf {save_path}')
@@ -83,7 +87,7 @@ def main(args: argparse.Namespace) -> None:
         ds.save(save_path, num_shards=args.num_shards)
         logging.info(
             f'Saved {name} dataset to {save_path}')
-
+        
     logging.info(f'DONE')
 
 

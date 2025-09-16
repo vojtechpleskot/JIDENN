@@ -27,11 +27,11 @@ general:
   load_checkpoint_path:
 
 data:
-  path: /scratch/ucjf-atlas/plesv6am/qg/tf_dataset_flatten/
-  dev_path: /scratch/ucjf-atlas/plesv6am/qg/tf_dataset_flatten/
+  path: /scratch/ucjf-atlas/plesv6am/qg/data9/tf_dataset_flatten
+  dev_path: /scratch/ucjf-atlas/plesv6am/qg/data9/tf_dataset_flatten
   dataset_weigths:
   dataset_norm: 
-  target: jets_PartonTruthLabelID
+  target: jets_atlas_label
   labels: # list of labels to use.
     - gluon
     - quark
@@ -45,10 +45,10 @@ data:
   weight: 
 
 test_data: 
-  path: /scratch/ucjf-atlas/plesv6am/qg/tf_dataset_flatten/
+  path: /scratch/ucjf-atlas/plesv6am/qg/data9/tf_dataset_flatten
   dataset_weigths:
   dataset_norm: 
-  target: jets_PartonTruthLabelID
+  target: jets_atlas_label
   labels: # list of labels to use.
     - gluon
     - quark

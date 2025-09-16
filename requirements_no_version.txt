@@ -1,4 +1,3 @@
-tensorflow 
 Jinja2 
 scikit-learn 
 uproot 
@@ -15,3 +14,6 @@ atlasify
 pytest
 ray
 awkward-pandas
+onnx
+tf2onnx
+puma

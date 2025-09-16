@@ -77,7 +77,7 @@ def get_filter_ragged_values_fn(reference_variable: str = 'jets_PartonTruthLabel
         if tf.math.equal(tf.size(reference_tensor), 0):
             return sample
         mask = tf.math.equal(tf.expand_dims(reference_tensor, axis=1), tf.tile(
-            tf.expand_dims(wanted_values, axis=0), [tf.shape(reference_tensor)[0], 1]))
+            tf.expand_dims(tf.cast(wanted_values, reference_tensor.dtype), axis=0), [tf.shape(reference_tensor)[0], 1]))
         mask = tf.reduce_any(mask, axis=1)
         for key, item in sample.items():
             if item.shape.num_elements() == 0 or item.shape.num_elements() == 1:
